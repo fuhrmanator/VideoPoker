@@ -1,6 +1,6 @@
 # Video Poker
 
-[![Java Tests](https://github.com/yourusername/VideoPoker/actions/workflows/maven-test.yml/badge.svg)](https://github.com/yourusername/VideoPoker/actions/workflows/maven-test.yml)
+[![Java Tests](https://github.com/fuhrmanator/VideoPoker/actions/workflows/maven-test.yml/badge.svg)](https://github.com/fuhrmanator/VideoPoker/actions/workflows/maven-test.yml)
 
 A classic Video Poker game implementation in Java. This project was originally created around 2004 and has been updated to use modern build tools.
 
