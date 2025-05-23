@@ -14,7 +14,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.util.LinkedHashSet;
 
 import javax.swing.ImageIcon;
 
@@ -38,63 +37,6 @@ public class CardUtils
 	public static final Image JACK_D_IMAGE = createImage("face-jd.gif", "");
 	public static final Image JACK_S_IMAGE = createImage("face-js.gif", "");
 	public static final Image JACK_C_IMAGE = createImage("face-jc.gif", "");
-
-    public static final int 
-		SUIT_DIAMONDS = 1, 
-		SUIT_CLUBS = 2, 
-		SUIT_HEARTS = 3, 
-		SUIT_SPADES = 4;
-
-    public static final int 
-        RANK_2 = 1,
-        RANK_3 = 2,
-        RANK_4 = 3,
-        RANK_5 = 4,
-        RANK_6 = 5,
-        RANK_7 = 6,
-        RANK_8 = 7,
-        RANK_9 = 8,
-        RANK_10 = 9,
-        RANK_JACK = 10,
-        RANK_QUEEN = 11,
-        RANK_KING = 12,
-		RANK_ACE = 13;
-//	RANK_ACE = 1,
-//	RANK_2 = 2,
-//	RANK_3 = 3,
-//	RANK_4 = 4,
-//	RANK_5 = 5,
-//	RANK_6 = 6,
-//	RANK_7 = 7,
-//	RANK_8 = 8,
-//	RANK_9 = 9,
-//	RANK_10 = 10,
-//	RANK_JACK = 11,
-//	RANK_QUEEN = 12,
-//	RANK_KING = 13;
-
-	public static final String[] SUITS_RESSOURCE = {
-		"diamonds",
-		"clubs",
-		"hearts",
-		"spades",
-	};
-
-	public static final String[] RANKS_RESSOURCE = {
-		"deuce",
-		"three",
-		"four",
-		"five",
-		"six",
-		"seven",
-		"eight",
-		"nine",
-		"ten",
-		"jack",
-		"queen",
-		"king",
-		"ace",
-	};
 
     public static final Area 
 		DIAMOND_AREA = generateDiamondArea(),
@@ -238,42 +180,4 @@ public class CardUtils
 		}
 	}
 
-	/**
-	 * Returns an ordered set of suits, from lowest to highest value.
-	 * Could be overridden to change order.
-	 * @return
-	 */
-	public static LinkedHashSet getSuits()
-	{
-		LinkedHashSet suits = new LinkedHashSet();
-		suits.add(new Integer(SUIT_DIAMONDS));
-		suits.add(new Integer(SUIT_CLUBS));
-		suits.add(new Integer(SUIT_HEARTS));
-		suits.add(new Integer(SUIT_SPADES));
-		return suits;
-	}
-
-	/**
-	 * Returns an ordered set of ranks, from lowest to highest value.
-	 * Could be overridden to change order.
-	 * @return
-	 */
-	public static LinkedHashSet getRanks()
-	{
-		LinkedHashSet ranks = new LinkedHashSet();
-		ranks.add(new Integer(RANK_2));
-		ranks.add(new Integer(RANK_3));
-		ranks.add(new Integer(RANK_4));
-		ranks.add(new Integer(RANK_5));
-		ranks.add(new Integer(RANK_6));
-		ranks.add(new Integer(RANK_7));
-		ranks.add(new Integer(RANK_8));
-		ranks.add(new Integer(RANK_9));
-		ranks.add(new Integer(RANK_10));
-		ranks.add(new Integer(RANK_JACK));
-		ranks.add(new Integer(RANK_QUEEN));
-		ranks.add(new Integer(RANK_KING));
-		ranks.add(new Integer(RANK_ACE));
-		return ranks;
-	}
 }

@@ -4,12 +4,16 @@
  */
 package mains;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import cartes.CardUtils;
 import cartes.Carte;
+import cartes.CouleurCarte;
+import cartes.Dénomination;
 
 /**
  * @author Cris
@@ -18,7 +22,7 @@ import cartes.Carte;
 public class RangPoker implements Comparable
 {
 
-	private static Class[] connaîsseursRangsEnOrdre = 
+	private static Class[] analyseursRangsEnOrdre = 
 	{
 		FlushRoyale.class,
 		QuinteCouleur.class,
@@ -32,7 +36,7 @@ public class RangPoker implements Comparable
 		CarteIsolée.class,
 	};
 
-	static AbstractConnaîsseurRang chaîneConnaîsseurs = initChaîneConnaîsseurs();
+	static AbstractAnalyseurRang chaîneAnalyseurs = initChaîneAnalyseurs();
 
 	public static int RANG_CARTE_ISOLEE = 0,
 		RANG_PAIRE = 1,
@@ -63,42 +67,43 @@ public class RangPoker implements Comparable
 	/**
 	 * Créer un rang pour une main de Poker. 
 	 * @param valeurMajeure valeur du rang de la main
-	 * @param valeurMineure valeur pour distinguer entre deux main ayant le même rang
+	 * @param cartesDéterminantes autres cartes nécessaire pour l'importance du rang
 	 */
-	public RangPoker(int valeurMajeure, int valeurMineure)
+	public RangPoker(int valeurMajeure, Collection<Carte> cartesDéterminantes)
 	{
-		this.valeurMajeure = valeurMajeure;
-		this.valeurMineure = valeurMineure;
+		this.rang = valeurMajeure;
+		this.cartesDéterminantes = cartesDéterminantes;
 	}
 
 	/**
-	 * @return
+	 * Initialiser la chaîne d'analyseurs
+	 * @return le premier analyseur de la liste (chaîne) 
 	 */
-	private static AbstractConnaîsseurRang initChaîneConnaîsseurs()
+	private static AbstractAnalyseurRang initChaîneAnalyseurs()
 	{
-		AbstractConnaîsseurRang connaîsseur = null;
-		AbstractConnaîsseurRang premierConnaîsseur = null;
-		AbstractConnaîsseurRang connaîsseurDernier = null;
+		AbstractAnalyseurRang analyseur = null;
+		AbstractAnalyseurRang premierAnalyseur = null;
+		AbstractAnalyseurRang analyseurDernier = null;
 
 		/*
 		 * Créer la chaîne dynamiquement, à partir du tableau de connaîsseurs
 		 */
-		for (int rang = 0; rang < connaîsseursRangsEnOrdre.length; rang++)
+		for (int rang = 0; rang < analyseursRangsEnOrdre.length; rang++)
 		{
 			try
 			{
-				connaîsseur = (AbstractConnaîsseurRang) connaîsseursRangsEnOrdre[rang].newInstance();
+				analyseur = (AbstractAnalyseurRang) analyseursRangsEnOrdre[rang].newInstance();
 				// mémoriser le premier
-				if (premierConnaîsseur == null)
+				if (premierAnalyseur == null)
 				{
-					premierConnaîsseur = connaîsseur;
+					premierAnalyseur = analyseur;
 				}
 				// enchaîner avec le précédant avec le courant
-				if (connaîsseurDernier != null)
+				if (analyseurDernier != null)
 				{
-					connaîsseurDernier.setSuivant(connaîsseur);
+					analyseurDernier.setSuivant(analyseur);
 				}
-				connaîsseurDernier = connaîsseur;
+				analyseurDernier = analyseur;
 			} catch (InstantiationException e)
 			{
 				// TODO Auto-generated catch block
@@ -119,20 +124,20 @@ public class RangPoker implements Comparable
 //			connaîsseur = connaîsseur.getSuivant();
 //		}
 		// retourner le premier élément dans la chaîne
-		return premierConnaîsseur;
+		return premierAnalyseur;
 	}
 
 	/**
 	 * Retourner une instance de RangPoker
 	 * Cette méthode trouve le rang le plus haut d'une main.
-	 * C'est une impémentation du patron Chain of Responsability
-	 * @param main
-	 * @return
+	 * C'est une implémentation du patron Chain of Responsability
+	 * @param main de poker pour laquelle on veut obtenir son rang
+	 * @return le RangPoker correspondant à la main
 	 */
 	public static RangPoker fabriqueRang(Main main)
 	{
-		DemandeRecMain demande = new DemandeRecMain(main);
-		chaîneConnaîsseurs.traiterDemande(demande);
+		ReqAnalyseMain demande = new ReqAnalyseMain(main);
+		chaîneAnalyseurs.traiterDemande(demande);
 		RangPoker rangMain = demande.getRangReconnu();
 		return rangMain;
 	}	
@@ -149,20 +154,21 @@ public class RangPoker implements Comparable
 	 * @return un SortedSet contenant la carte inférieure de chaque groupe de N cartes étant de la même dénomination
 	 *  
 	 */
-	protected static SortedSet trouverDénominationN(Iterator cartes, int n)
+	protected static SortedSet<Carte> trouverDénominationN(Iterator cartes, int n)
 	{
-		SortedSet trouvailles = new TreeSet();
-		SortedSet trouvaillesTemp = null;
+		SortedSet<Carte> trouvailles = new TreeSet<Carte>(Collections.reverseOrder());
+		SortedSet<Carte> trouvaillesTemp = null;
 
 		int rang = -1;
 		while(cartes.hasNext())
 		{
 			Carte carte = (Carte) cartes.next();
 			// 
-			if (carte.getRang() != rang)
+			int valeurRelative = Dénomination.DÉNOMINATIONS.indexOf(carte.getDénomination());
+			if (valeurRelative != rang)
 			{
-				rang = carte.getRang();
-				trouvaillesTemp = new TreeSet();
+				rang = valeurRelative;
+				trouvaillesTemp = new TreeSet<Carte>(Collections.reverseOrder());
 				trouvaillesTemp.add(carte);
 			}
 			else
@@ -182,13 +188,15 @@ public class RangPoker implements Comparable
 	}
 
 	/**
-	 * Comparer deux rangs -- normalement redéfini dans chaque sous-classe
+	 * Comparer deux rangs
 	 */
 	public int compareTo(Object o)
 	{
 		RangPoker autreRang = (RangPoker) o;
-		Integer valThis = new Integer(this.valeurMajeure * FACTEUR_MAJEURE  + this.valeurMineure);
-		Integer valAutre = new Integer(autreRang.valeurMajeure * FACTEUR_MAJEURE + autreRang.valeurMineure);
+		// TODO -- this needs fixing for subtle rules - should use cartesDéterminantes to give values
+//		Integer valThis = new Integer(this.rang * FACTEUR_MAJEURE  + this.valeurMineure);
+		Integer valThis = new Integer(this.rang * FACTEUR_MAJEURE);
+		Integer valAutre = new Integer(autreRang.rang * FACTEUR_MAJEURE);
 		System.out.println("RangPoker: compareTo() " + valThis + " compared to " + valAutre);
 		return - valThis.compareTo(valAutre);
 	}
@@ -208,7 +216,7 @@ public class RangPoker implements Comparable
 			for (Iterator paireIter = paires.iterator(); paireIter.hasNext();)
 			{
 				Carte paire = (Carte) paireIter.next();
-				if (carteMain.getRang() == paire.getRang())
+				if (carteMain.getDénomination() == paire.getDénomination())
 				{
 					dansPaire = true;
 				}
@@ -225,19 +233,22 @@ public class RangPoker implements Comparable
 
 	/**
 	 * @param main
-	 * @return true si toutes les cartes dans la main sont de la même sorte
+	 * @return true si toutes les cartes dans la main sont de la même couleur
 	 */
-	public static boolean estMêmeSorte(Main main)
+	public static boolean estMêmeCouleur(Main main)
 	{
 		boolean estMêmeSorte = false;
 		Iterator carteIter = main.iterator();
 		// mémoriser la sorte de la 1ere carte
 		Carte carte = (Carte) carteIter.next();
-		int sorteTemp = carte.getSorte();
+		CouleurCarte couleurTemp = carte.getCouleur();
+
+		System.out.println("estMêmeCouleur: couleurTemp = " + couleurTemp);
 
 		while(carteIter.hasNext())
 		{
-			if (carte.getSorte() != sorteTemp) 
+			System.out.println("estMêmeCouleur: carte.getSorte() = " + carte.getCouleur());
+			if (!carte.getCouleur().equals(couleurTemp)) 
 			{
 				break;
 			}
@@ -263,25 +274,34 @@ public class RangPoker implements Comparable
 		Iterator carteIter = main.iterator();
 		// mémoriser le rang de la 1ere carte
 		Carte carte = (Carte) carteIter.next();
-		int rangTemp = carte.getRang();
+		int dénomValDern = Dénomination.DÉNOMINATIONS.indexOf(carte.getDénomination());
 		int compte = 1;
 		System.out.println("estEnSérie: " + carte);
 		
-		while(carteIter.hasNext())
+		while (carteIter.hasNext())
 		{
 			carte = (Carte) carteIter.next();
 			System.out.println("estEnSérie: " + carte);
 			// ordre décroissant, cas spécial où l'as est dans une série
-			if (carte.getRang() != rangTemp - 1 && !(rangTemp == CardUtils.RANK_ACE && carte.getRang() == CardUtils.RANK_2 + main.size() - 2)) 
+			// if (carte.getRang() != rangTemp - 1 && !(rangTemp == CardUtils.RANK_ACE && carte.getRang() == CardUtils.RANK_2 + main.size() - 2)) 
+
+			// cartes sont triées ordre décroissant
+			boolean suit = Dénomination.DÉNOMINATIONS.indexOf(carte.getDénomination()) == dénomValDern - 1;
+			boolean premierAs = dénomValDern == Dénomination.DÉNOMINATIONS.indexOf(Dénomination.AS);
+			boolean deuxiemeCinq = carte.getDénomination() == Dénomination.CINQ;
+
+//			System.out.println("estEnSérie: suit = " + suit);
+//			System.out.println("estEnSérie: premierAs = " + premierAs);
+//			System.out.println("estEnSérie: deuxiemeCinq = " + deuxiemeCinq);
+
+			if (suit || (premierAs && deuxiemeCinq))
+			{
+				compte++;
+			} else
 			{
 				break;
 			}
-			else
-			{
-				compte++;
-			}
-
-			rangTemp = carte.getRang();
+			dénomValDern = Dénomination.DÉNOMINATIONS.indexOf(carte.getDénomination());
 		}
 		// si on est passé par toutes les cartes à la sortie de la boucle
 		// alors il s'agit d'une quinte
@@ -292,16 +312,6 @@ public class RangPoker implements Comparable
 		return estEnSérie;
 	}
 
-	/**
-	 * Chaque sous-classe de rang a une valeure
-	 */
-	protected int valeurMajeure;
-
-	/**
-	 * Valeur pour distinguer entre deux instances du même rang
-	 */
-	protected int valeurMineure = 0;
-
 	// multiplicateur pour la valeur majeure
 	private static int FACTEUR_MAJEURE = 10000;
 
@@ -310,9 +320,19 @@ public class RangPoker implements Comparable
 	 */
 	public int getRang()
 	{
-		return this.valeurMajeure;
+		return this.rang;
 	}
 
 	// TODO add the winning value for video poker for each hand
+
+	/**
+	 * Chaque sous-classe de rang a une valeure
+	 */
+	protected int rang;
+
+	/**
+	 * Valeur pour distinguer entre deux instances du même rang
+	 */
+	protected Collection<Carte> cartesDéterminantes = new ArrayList<Carte>();
 
 }

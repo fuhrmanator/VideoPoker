@@ -4,13 +4,16 @@
  */
 package mains;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import cartes.Carte;
 
 /**
  * @author Cris
  *
  */
-public class CarteIsolée extends AbstractConnaîsseurRang
+public class CarteIsolée extends AbstractAnalyseurRang
 {
 
 	//	/**
@@ -25,15 +28,17 @@ public class CarteIsolée extends AbstractConnaîsseurRang
 	//		this.valeurMineure = carteHaute.getValeur();
 	//	}
 	//
-	public boolean reconnaîtreMain(DemandeRecMain demande)
+	public boolean reconnaîtreMain(ReqAnalyseMain demande)
 	{
 		boolean résultat = false;
 		Main main = demande.getMain();
 		System.out.println("CarteIsolée: évalueMain pour " + main);
-		Carte carte = (Carte) main.first();
-		résultat = true;
+		// créer une le nouveau rang, avec une carte du brelan comme déterminante
+		Collection<Carte> carteIsolée = new ArrayList<Carte>();
+		carteIsolée.add(main.first());
 		demande.setRangReconnu(
-			new RangPoker(RangPoker.RANG_CARTE_ISOLEE, carte.getRang()));
+			new RangPoker(RangPoker.RANG_CARTE_ISOLEE, carteIsolée));
+		résultat = true;
 		return résultat;
 	}
 

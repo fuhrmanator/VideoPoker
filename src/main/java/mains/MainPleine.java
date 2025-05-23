@@ -6,6 +6,8 @@
  */
 package mains;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.SortedSet;
 
@@ -17,7 +19,7 @@ import cartes.Carte;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class MainPleine extends AbstractConnaîsseurRang
+public class MainPleine extends AbstractAnalyseurRang
 {
 
 	//	public MainPleine(Main main, Carte brelan, Carte paire)
@@ -27,34 +29,39 @@ public class MainPleine extends AbstractConnaîsseurRang
 	//		this.valeurMineure = brelan.getRang() * 13 + paire.getRang();
 	//	}
 
-	public boolean reconnaîtreMain(DemandeRecMain demande)
+	public boolean reconnaîtreMain(ReqAnalyseMain demande)
 	{
 		boolean résultat = false;
 		Main main = demande.getMain();
-		SortedSet brelans = RangPoker.trouverDénominationN(main.iterator(), 3);
+		SortedSet<Carte> brelans = RangPoker.trouverDénominationN(main.iterator(), 3);
 		if (brelans.size() > 0)
 		{
-			SortedSet paires =
+			SortedSet<Carte> paires =
 				RangPoker.trouverDénominationN(main.iterator(), 2);
 			if (paires.size() > 1)
 			{
 				// créer une instance de MainPleine, avec la main, une carte du brelan 
 				// et une de la paire
-				Iterator brelanIter = brelans.iterator();
-				Carte brelan = (Carte) brelanIter.next();
+				Iterator<Carte> brelanIter = brelans.iterator();
+				Carte brelan = brelanIter.next();
 
 				// traverser liste de paires, mais ignorer les paires du brelan si jamais
-				Iterator paireIter = paires.iterator();
+				Iterator<Carte> paireIter = paires.iterator();
 				Carte paire;
 				do
 				{
-					paire = (Carte) paireIter.next();
-				} while (paire.getRang() != brelan.getRang());
+					paire = paireIter.next();
+				} while (paire.getDénomination() != brelan.getDénomination());
 
+				// créer le nouveau rang, avec deux cartes comme déterminantes
+				Collection<Carte> déterminante = new ArrayList<Carte>();
+				déterminante.add(brelan);
+				déterminante.add(paire);
+				
 				demande.setRangReconnu(
 					new RangPoker(
 						RangPoker.RANG_MAIN_PLEINE,
-						brelan.getRang() * 13 + paire.getRang()));
+						déterminante));
 
 				résultat = true;
 			}

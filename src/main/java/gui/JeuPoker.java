@@ -22,9 +22,10 @@ import javax.swing.JPanel;
 
 import mains.Main;
 import mains.RangPoker;
-import cartes.CardUtils;
 import cartes.Carte;
+import cartes.CouleurCarte;
 import cartes.DefaultCardModel;
+import cartes.Dénomination;
 import cartes.JCard;
 import cartes.Jeu;
 
@@ -131,6 +132,7 @@ public class JeuPoker extends JFrame implements ActionListener
 		// Une main de 5 cartes, msg au dessus de chaque carte
 		for (int i = 0; i < mainJoueur.length; i++)
 		{
+			Iterator dénomIter = Dénomination.DÉNOMINATIONS.iterator();
 			JPanel cartePanel = new JPanel();
 			mainPanel.add(cartePanel);
 
@@ -142,8 +144,8 @@ public class JeuPoker extends JFrame implements ActionListener
 				new JCard(
 					mainJoueur[i] =
 						new DefaultCardModel(
-							CardUtils.RANK_ACE - i,
-							CardUtils.SUIT_SPADES));
+							(Dénomination) dénomIter.next(),
+							CouleurCarte.PIQUE));
 			mainJoueur[i].setVisible(false);
 			cartePanel.add(jCartes[i]);
 
@@ -276,7 +278,7 @@ public class JeuPoker extends JFrame implements ActionListener
 		for (int i = 0; i < 5; i++)
 		{
 			Carte carte = (Carte) this.jeuIterator.next();
-			mainJoueur[i].update(carte.getRang(), carte.getSorte());
+			mainJoueur[i].update(carte.getDénomination(), carte.getCouleur());
 			mainJoueur[i].setVisible(true);
 			// attendre pour l'animation
 			attendre(DÉLAI_ANIMATION);
@@ -360,8 +362,8 @@ public class JeuPoker extends JFrame implements ActionListener
 
 				Carte nouvelleCarte = (Carte) jeuIterator.next();
 				mainJoueur[i].update(
-					nouvelleCarte.getRang(),
-					nouvelleCarte.getSorte());
+					nouvelleCarte.getDénomination(),
+					nouvelleCarte.getCouleur());
 
 			} else
 			{

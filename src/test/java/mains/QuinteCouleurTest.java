@@ -1,21 +1,28 @@
 /*
  * Created on Dec 16, 2004
  *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package mains;
 
 import cartes.Carte;
+import cartes.Dénomination;
 
 /**
+ * Ensemble de tests unitaires pour tester l'analyse d'une main qui est une quinte couleur (Straight Flush) de Poker
+ * 
  * @author Cris
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class QuinteCouleurTest extends RangPokerTest
+public class QuinteCouleurTest extends AbstractAnalyseurRangTest
 {
+
+	/**
+	 * @param arg0
+	 */
+	public QuinteCouleurTest(String arg0)
+	{
+		super(arg0);
+		// TODO Auto-generated constructor stub
+	}
 
 	public void testÉvalueMain()
 	{
@@ -23,49 +30,49 @@ public class QuinteCouleurTest extends RangPokerTest
 		 * Test avec main qui n'est pas une quinte couleur
 		 */
 		Main main = new Main();
-		main.add(new Carte("trois", "carreau"));
-		main.add(new Carte("neuf", "pique"));
-		main.add(new Carte("as", "trèfle"));
-		main.add(new Carte("dame", "coeur"));
-		main.add(new Carte("deux", "coeur"));
+		main.add(new Carte(Dénomination.TROIS, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.NEUF, cartes.CouleurCarte.PIQUE));
+		main.add(new Carte(Dénomination.AS, cartes.CouleurCarte.TRÈFLE));
+		main.add(new Carte(Dénomination.DAME, cartes.CouleurCarte.COEUR));
+		main.add(new Carte(Dénomination.DEUX, cartes.CouleurCarte.COEUR));
 		
-		assertFalse(new QuinteCouleur().reconnaîtreMain(new DemandeRecMain(main)));
+		assertFalse(new QuinteCouleur().reconnaîtreMain(new ReqAnalyseMain(main)));
 
 		/*
 		 * Test avec main qui n'est pas une quinte couleur
 		 */
 		main = new Main();
-		main.add(new Carte("trois", "trèfle"));
-		main.add(new Carte("cinq", "carreau"));
-		main.add(new Carte("quatre", "carreau"));
-		main.add(new Carte("deux", "carreau"));
-		main.add(new Carte("as", "carreau"));
+		main.add(new Carte(Dénomination.TROIS, cartes.CouleurCarte.TRÈFLE));
+		main.add(new Carte(Dénomination.CINQ, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.QUATRE, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.DEUX, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.AS, cartes.CouleurCarte.CARREAU));
 		
-		assertFalse(new QuinteCouleur().reconnaîtreMain(new DemandeRecMain(main)));
+		assertFalse(new QuinteCouleur().reconnaîtreMain(new ReqAnalyseMain(main)));
 
 		/*
 		 * Test avec main qui est une quinte couleur avec AS
 		 */
 		main = new Main();
-		main.add(new Carte("trois", "carreau"));
-		main.add(new Carte("cinq", "carreau"));
-		main.add(new Carte("quatre", "carreau"));
-		main.add(new Carte("deux", "carreau"));
-		main.add(new Carte("as", "carreau"));
+		main.add(new Carte(Dénomination.TROIS, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.CINQ, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.QUATRE, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.DEUX, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.AS, cartes.CouleurCarte.CARREAU));
 		
-		assertTrue(new QuinteCouleur().reconnaîtreMain(new DemandeRecMain(main)));
+		assertTrue(new QuinteCouleur().reconnaîtreMain(new ReqAnalyseMain(main)));
 
 		/*
 		 * Test avec main qui est une quinte couleur sans AS
 		 */
 		main = new Main();
-		main.add(new Carte("trois", "coeur"));
-		main.add(new Carte("cinq", "coeur"));
-		main.add(new Carte("quatre", "coeur"));
-		main.add(new Carte("deux", "coeur"));
-		main.add(new Carte("six", "coeur"));
+		main.add(new Carte(Dénomination.TROIS, cartes.CouleurCarte.COEUR));
+		main.add(new Carte(Dénomination.CINQ, cartes.CouleurCarte.COEUR));
+		main.add(new Carte(Dénomination.QUATRE, cartes.CouleurCarte.COEUR));
+		main.add(new Carte(Dénomination.DEUX, cartes.CouleurCarte.COEUR));
+		main.add(new Carte(Dénomination.SIX, cartes.CouleurCarte.COEUR));
 
-		assertTrue(new QuinteCouleur().reconnaîtreMain(new DemandeRecMain(main)));
+		assertTrue(new QuinteCouleur().reconnaîtreMain(new ReqAnalyseMain(main)));
 
 	}
 }

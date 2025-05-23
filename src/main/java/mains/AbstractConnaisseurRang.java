@@ -8,20 +8,20 @@ package mains;
  * @author Cris
  *
  */
-public abstract class AbstractConnaîsseurRang
+public abstract class AbstractConnaisseurRang
 {
 	/**
-	 * @param connaîsseur
+	 * @param connaisseur
 	 */
-	public void setSuivant(AbstractConnaîsseurRang connaîsseur)
+	public void setSuivant(AbstractConnaisseurRang connaisseur)
 	{
-		suivant = connaîsseur;
+		suivant = connaisseur;
 	}
 
 	/**
 	 * @return
 	 */
-	public AbstractConnaîsseurRang getSuivant()
+	public AbstractConnaisseurRang getSuivant()
 	{
 		return suivant;
 	}
@@ -51,6 +51,6 @@ public abstract class AbstractConnaîsseurRang
 	 */
 	public abstract boolean reconnaîtreMain(DemandeRecMain demande);
 
-	private AbstractConnaîsseurRang suivant;
+	private AbstractConnaisseurRang suivant;
 
 }

@@ -5,13 +5,13 @@
 package mains;
 
 /**
- * Objet qui est l'Ã©quivalent d'une requÃªte dans le patron Chain of Responsibility
+ * Objet qui est l'équivalent d'une requête dans le patron chaîne de responsibilités
  * @author Cris
  *
  */
-public class DemandeRecMain
+public class ReqAnalyseMain
 {
-	public DemandeRecMain(Main main)
+	public ReqAnalyseMain(Main main)
 	{
 		if (!main.estValide())
 		{
@@ -30,7 +30,7 @@ public class DemandeRecMain
 		return rangReconnu;
 	}
 	
-	// main Ã  reconnaÃ®tre
+	// main à reconnaître
 	private Main main;
 	
 	private RangPoker rangReconnu;

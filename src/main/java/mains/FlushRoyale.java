@@ -4,26 +4,26 @@
  */
 package mains;
 
-import cartes.CardUtils;
+import cartes.Dénomination;
 
 /**
  * @author Cris
  *
  */
-public class FlushRoyale extends AbstractConnaîsseurRang
+public class FlushRoyale extends AbstractAnalyseurRang
 {
 
-	public boolean reconnaîtreMain(DemandeRecMain demande)
+	public boolean reconnaîtreMain(ReqAnalyseMain demande)
 	{
 		boolean résultat = false;
 		Main main = demande.getMain();
-		if (RangPoker.estEnSérie(main) && RangPoker.estMêmeSorte(main) && main.first().getRang() == CardUtils.RANK_ACE)
+		if (RangPoker.estEnSérie(main)
+			&& RangPoker.estMêmeCouleur(main)
+			&& main.first().getDénomination() == Dénomination.AS)
 		{
-			// on utilise la sorte pour distinguer entre FLUSH ROYALE
+			// créer le nouveau rang, avec toute la main comme déterminante
 			demande.setRangReconnu(
-				new RangPoker(
-					RangPoker.RANG_FLUSH_ROYALE,
-					main.first().getSorte()));
+				new RangPoker(RangPoker.RANG_FLUSH_ROYALE, main.getCartes()));
 
 			résultat = true;
 		}

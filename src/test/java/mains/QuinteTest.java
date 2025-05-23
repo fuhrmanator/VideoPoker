@@ -1,21 +1,28 @@
 /*
  * Created on Dec 16, 2004
  *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package mains;
 
 import cartes.Carte;
+import cartes.Dénomination;
 
 /**
- * @author Cris
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * Ensemble de tests unitaires pour tester l'analyse d'une main qui est une quinte de Poker
+ * 
+ * @author Cris Fuhrman
  */
-public class QuinteTest extends RangPokerTest
+public class QuinteTest extends AbstractAnalyseurRangTest
 {
+
+	/**
+	 * @param arg0
+	 */
+	public QuinteTest(String arg0)
+	{
+		super(arg0);
+		// TODO Auto-generated constructor stub
+	}
 
 	public void testÉvalueMain()
 	{
@@ -23,37 +30,37 @@ public class QuinteTest extends RangPokerTest
 		 * Test avec main qui n'est pas une quinte
 		 */
 		Main main = new Main();
-		main.add(new Carte("trois", "carreau"));
-		main.add(new Carte("neuf", "pique"));
-		main.add(new Carte("as", "trèfle"));
-		main.add(new Carte("dame", "coeur"));
-		main.add(new Carte("deux", "coeur"));
+		main.add(new Carte(Dénomination.TROIS, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.NEUF, cartes.CouleurCarte.PIQUE));
+		main.add(new Carte(Dénomination.AS, cartes.CouleurCarte.TRÈFLE));
+		main.add(new Carte(Dénomination.DAME, cartes.CouleurCarte.COEUR));
+		main.add(new Carte(Dénomination.DEUX, cartes.CouleurCarte.COEUR));
 		
-		assertFalse(new Quinte().reconnaîtreMain(new DemandeRecMain(main)));
+		assertFalse(new Quinte().reconnaîtreMain(new ReqAnalyseMain(main)));
 
 		/*
 		 * Test avec main qui est une quinte avec AS
 		 */
 		main = new Main();
-		main.add(new Carte("trois", "carreau"));
-		main.add(new Carte("cinq", "carreau"));
-		main.add(new Carte("quatre", "carreau"));
-		main.add(new Carte("deux", "carreau"));
-		main.add(new Carte("as", "carreau"));
+		main.add(new Carte(Dénomination.TROIS, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.CINQ, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.QUATRE, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.DEUX, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.AS, cartes.CouleurCarte.CARREAU));
 		
-		assertTrue(new Quinte().reconnaîtreMain(new DemandeRecMain(main)));
+		assertTrue(new Quinte().reconnaîtreMain(new ReqAnalyseMain(main)));
 
 		/*
 		 * Test avec main qui est une quinte sans AS
 		 */
 		main = new Main();
-		main.add(new Carte("trois", "pique"));
-		main.add(new Carte("cinq", "carreau"));
-		main.add(new Carte("quatre", "trèfle"));
-		main.add(new Carte("deux", "coeur"));
-		main.add(new Carte("six", "carreau"));
-
-		assertTrue(new Quinte().reconnaîtreMain(new DemandeRecMain(main)));
+		main.add(new Carte(Dénomination.TROIS, cartes.CouleurCarte.PIQUE));
+		main.add(new Carte(Dénomination.CINQ, cartes.CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.QUATRE, cartes.CouleurCarte.TRÈFLE));
+		main.add(new Carte(Dénomination.DEUX, cartes.CouleurCarte.COEUR));
+		main.add(new Carte(Dénomination.SIX, cartes.CouleurCarte.CARREAU));
+		
+		assertTrue(new Quinte().reconnaîtreMain(new ReqAnalyseMain(main)));
 
 	}
 }

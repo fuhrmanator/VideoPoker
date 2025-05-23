@@ -1,21 +1,29 @@
 /*
  * Created on Dec 16, 2004
  *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package mains;
 
 import cartes.Carte;
+import cartes.CouleurCarte;
+import cartes.Dénomination;
 
 /**
- * @author Cris
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * Ensemble de tests unitaires pour tester l'analyse d'une main qui est une couleur (Flush) de Poker
+ * 
+ * @author Cris Fuhrman
  */
-public class CouleurTest extends RangPokerTest
+public class CouleurTest extends AbstractAnalyseurRangTest
 {
+
+	/**
+	 * @param arg0
+	 */
+	public CouleurTest(String arg0)
+	{
+		super(arg0);
+		// TODO Auto-generated constructor stub
+	}
 
 	public void testÉvalueMain()
 	{
@@ -23,25 +31,25 @@ public class CouleurTest extends RangPokerTest
 		 * Test avec main qui n'est pas une couleur
 		 */
 		Main main = new Main();
-		main.add(new Carte("trois", "carreau"));
-		main.add(new Carte("neuf", "pique"));
-		main.add(new Carte("as", "trèfle"));
-		main.add(new Carte("dame", "coeur"));
-		main.add(new Carte("deux", "coeur"));
+		main.add(new Carte(Dénomination.TROIS, CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.NEUF, CouleurCarte.PIQUE));
+		main.add(new Carte(Dénomination.AS, CouleurCarte.TRÈFLE));
+		main.add(new Carte(Dénomination.DAME, CouleurCarte.COEUR));
+		main.add(new Carte(Dénomination.DEUX, CouleurCarte.COEUR));
 		
-		assertFalse(new Couleur().reconnaîtreMain(new DemandeRecMain(main)));
+		assertFalse(new mains.Couleur().reconnaîtreMain(new ReqAnalyseMain(main)));
 
 		/*
 		 * Test avec main qui est une couleur
 		 */
 		main = new Main();
-		main.add(new Carte("trois", "carreau"));
-		main.add(new Carte("neuf", "carreau"));
-		main.add(new Carte("as", "carreau"));
-		main.add(new Carte("dame", "carreau"));
-		main.add(new Carte("deux", "carreau"));
+		main.add(new Carte(Dénomination.TROIS, CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.NEUF, CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.AS, CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.DAME, CouleurCarte.CARREAU));
+		main.add(new Carte(Dénomination.DEUX, CouleurCarte.CARREAU));
 		
-		assertTrue(new Couleur().reconnaîtreMain(new DemandeRecMain(main)));
+		assertTrue(new mains.Couleur().reconnaîtreMain(new ReqAnalyseMain(main)));
 
 	}
 }

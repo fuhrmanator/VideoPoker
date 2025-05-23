@@ -4,6 +4,8 @@
  */
 package mains;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.SortedSet;
 
 import cartes.Carte;
@@ -14,23 +16,28 @@ import cartes.Carte;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class Paire extends AbstractConnaîsseurRang
+public class Paire extends AbstractAnalyseurRang
 {
 
-	public boolean reconnaîtreMain(DemandeRecMain demande)
+	public boolean reconnaîtreMain(ReqAnalyseMain demande)
 	{
 		boolean résultat = false;
 		Main main = demande.getMain();
-		SortedSet paires = RangPoker.trouverDénominationN(main.iterator(), 2);
+		SortedSet<Carte> paires = RangPoker.trouverDénominationN(main.iterator(), 2);
 		if (paires.size() > 0)
 		{
-			Carte paire = (Carte) paires.first();
+			// créer le nouveau rang, avec deux cartes comme déterminantes
+			Carte paire = paires.first();
 			Carte kicker = RangPoker.identifieKicker(main, paires);
-			// créer une instance de Paire, avec la main et une carte de la paire
+
+			Collection<Carte> déterminante = new ArrayList<Carte>();
+			déterminante.add(paire);
+			déterminante.add(kicker);
+
 			demande.setRangReconnu(
 				new RangPoker(
 					RangPoker.RANG_PAIRE,
-					paire.getRang() * 13 + kicker.getRang()));
+					déterminante));
 			résultat = true;
 		}
 		return résultat;

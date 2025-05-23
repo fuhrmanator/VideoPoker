@@ -4,6 +4,8 @@
  */
 package mains;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -17,6 +19,11 @@ import cartes.Carte;
  */
 public class Main implements Comparable
 {
+	
+	public Main()
+	{
+		super();
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -51,9 +58,6 @@ public class Main implements Comparable
 		
 		return rangPoker;
 	}
-
-	private TreeSet cartes = new TreeSet();
-	private RangPoker rangPoker;
 
 	/**
 	 * Ajouter une carte dans la main.
@@ -98,7 +102,22 @@ public class Main implements Comparable
 	 */
 	public Carte first()
 	{
-		return (Carte) cartes.first();
+		return cartes.first();
 	}
+
+	/**
+	 * 
+	 */
+	public Collection<Carte> getCartes()
+	{
+		return cartes;
+	}
+
+	// faire en sorte que le TreeSet soit trié dans l'ordre décroissant
+	private TreeSet<Carte> cartes = new TreeSet<Carte>(Collections.reverseOrder());
+
+	private RangPoker rangPoker;
+	
+	//
 	
 }

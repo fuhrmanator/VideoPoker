@@ -34,7 +34,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -54,8 +53,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 	private boolean pressed;
 	private boolean inside;
 	protected static int CARD_WIDTH = 50, CARD_HEIGHT = 70;
-	private static double SYMBOL_SCALE_FACTOR_X = 0.1,
-		SYMBOL_SCALE_FACTOR_Y = 0.1;
+//	private static double SYMBOL_SCALE_FACTOR_X = 0.1,
+//		SYMBOL_SCALE_FACTOR_Y = 0.1;
 
 	private DefaultCardModel model;
 	private Area suitSymbol;
@@ -65,7 +64,7 @@ public class JCard extends JPanel implements Observer, MouseListener
 	private String label;
 	private Color color;
 
-	private List actionListeners = new ArrayList();
+	private List<ActionListener> actionListeners = new ArrayList<ActionListener>();
 
 	private Dimension preferredSize;
 
@@ -107,130 +106,213 @@ public class JCard extends JPanel implements Observer, MouseListener
 			this.imageLabel = null;
 		}
 
-		switch (model.getSuit())
+		CouleurCarte suit = model.getSuit();
+
+		color =
+			(suit == CouleurCarte.COEUR || suit == CouleurCarte.CARREAU)
+				? Color.red
+				: Color.black;
+
+		if (suit == CouleurCarte.COEUR)
 		{
-			case CardUtils.SUIT_DIAMONDS :
-				suitSymbol = CardUtils.DIAMOND_AREA;
-				color = Color.RED;
-				break;
+			suitSymbol = CardUtils.HEART_AREA;
+		}
+		else if (suit == CouleurCarte.PIQUE)
+		{
+			suitSymbol = CardUtils.SPADE_AREA;
+		}
+		else if (suit == CouleurCarte.CARREAU)
+		{
+			suitSymbol = CardUtils.DIAMOND_AREA;
+		}
+		else // (suit == Couleur.TRÈFLE)
+		{
+			suitSymbol = CardUtils.CLUB_AREA;
+		}
+		
+//		switch (model.getSuit())
+//		{
+//			case CardUtils.SUIT_DIAMONDS :
+//				suitSymbol = CardUtils.DIAMOND_AREA;
+//				color = Color.RED;
+//				break;
+//
+//			case CardUtils.SUIT_CLUBS :
+//				suitSymbol = CardUtils.CLUB_AREA;
+//				color = Color.BLACK;
+//				break;
+//
+//			case CardUtils.SUIT_HEARTS :
+//				suitSymbol = CardUtils.HEART_AREA;
+//				color = Color.RED;
+//				break;
+//
+//			case CardUtils.SUIT_SPADES :
+//				suitSymbol = CardUtils.SPADE_AREA;
+//				color = Color.BLACK;
+//				break;
+//		}
 
-			case CardUtils.SUIT_CLUBS :
-				suitSymbol = CardUtils.CLUB_AREA;
-				color = Color.BLACK;
-				break;
+		rankSymbol = model.getRank().caractèreSurCarte();
+//		switch (model.getRank())
+//		{
+//			case CardUtils.RANK_2 :
+//				rankSymbol = "2";
+//				break;
+//			case CardUtils.RANK_3 :
+//				rankSymbol = "3";
+//				break;
+//			case CardUtils.RANK_4 :
+//				rankSymbol = "4";
+//				break;
+//			case CardUtils.RANK_5 :
+//				rankSymbol = "5";
+//				break;
+//			case CardUtils.RANK_6 :
+//				rankSymbol = "6";
+//				break;
+//			case CardUtils.RANK_7 :
+//				rankSymbol = "7";
+//				break;
+//			case CardUtils.RANK_8 :
+//				rankSymbol = "8";
+//				break;
+//			case CardUtils.RANK_9 :
+//				rankSymbol = "9";
+//				break;
+//			case CardUtils.RANK_10 :
+//				rankSymbol = "10";
+//				break;
+//
+//			case CardUtils.RANK_ACE :
+//				rankSymbol = "A";
+//				break;
+//
+//			case CardUtils.RANK_KING :
+//				rankSymbol = "K";
+//				switch (model.getSuit())
+//				{
+//					case CardUtils.SUIT_DIAMONDS :
+//						image = CardUtils.KING_D_IMAGE;
+//						break;
+//
+//					case CardUtils.SUIT_CLUBS :
+//						image = CardUtils.KING_C_IMAGE;
+//						break;
+//
+//					case CardUtils.SUIT_HEARTS :
+//						image = CardUtils.KING_H_IMAGE;
+//						break;
+//
+//					case CardUtils.SUIT_SPADES :
+//						image = CardUtils.KING_S_IMAGE;
+//						break;
+//				}
+//				break;
 
-			case CardUtils.SUIT_HEARTS :
-				suitSymbol = CardUtils.HEART_AREA;
-				color = Color.RED;
-				break;
-
-			case CardUtils.SUIT_SPADES :
-				suitSymbol = CardUtils.SPADE_AREA;
-				color = Color.BLACK;
-				break;
+		if (model.getRank() == Dénomination.ROI)
+		{
+			if (suit == CouleurCarte.CARREAU)
+			{
+				image = CardUtils.KING_D_IMAGE;
+			}
+			else if (suit == CouleurCarte.TRÈFLE)
+			{
+				image = CardUtils.KING_C_IMAGE;
+			}
+			else if (suit == CouleurCarte.PIQUE)
+			{
+				image = CardUtils.KING_S_IMAGE;
+			}
+			else // if (suit == Couleur.COEUR)
+			{
+				image = CardUtils.KING_H_IMAGE;
+			}
+		}
+		else if (model.getRank() == Dénomination.DAME)
+		{
+			if (suit == CouleurCarte.CARREAU)
+			{
+				image = CardUtils.QUEEN_D_IMAGE;
+			}
+			else if (suit == CouleurCarte.TRÈFLE)
+			{
+				image = CardUtils.QUEEN_C_IMAGE;
+			}
+			else if (suit == CouleurCarte.PIQUE)
+			{
+				image = CardUtils.QUEEN_S_IMAGE;
+			}
+			else // if (suit == Couleur.COEUR)
+			{
+				image = CardUtils.QUEEN_H_IMAGE;
+			}
+		}
+		else if (model.getRank() == Dénomination.VALET)
+		{
+			if (suit == CouleurCarte.CARREAU)
+			{
+				image = CardUtils.JACK_D_IMAGE;
+			}
+			else if (suit == CouleurCarte.TRÈFLE)
+			{
+				image = CardUtils.JACK_C_IMAGE;
+			}
+			else if (suit == CouleurCarte.PIQUE)
+			{
+				image = CardUtils.JACK_S_IMAGE;
+			}
+			else // if (suit == Couleur.COEUR)
+			{
+				image = CardUtils.JACK_H_IMAGE;
+			}
 		}
 
-		switch (model.getRank())
-		{
-			case CardUtils.RANK_2 :
-				rankSymbol = "2";
-				break;
-			case CardUtils.RANK_3 :
-				rankSymbol = "3";
-				break;
-			case CardUtils.RANK_4 :
-				rankSymbol = "4";
-				break;
-			case CardUtils.RANK_5 :
-				rankSymbol = "5";
-				break;
-			case CardUtils.RANK_6 :
-				rankSymbol = "6";
-				break;
-			case CardUtils.RANK_7 :
-				rankSymbol = "7";
-				break;
-			case CardUtils.RANK_8 :
-				rankSymbol = "8";
-				break;
-			case CardUtils.RANK_9 :
-				rankSymbol = "9";
-				break;
-			case CardUtils.RANK_10 :
-				rankSymbol = "10";
-				break;
+//
+//			case CardUtils.RANK_QUEEN :
+//				rankSymbol = "Q";
+//				switch (model.getSuit())
+//				{
+//					case CardUtils.SUIT_DIAMONDS :
+//						image = CardUtils.QUEEN_D_IMAGE;
+//						break;
+//
+//					case CardUtils.SUIT_CLUBS :
+//						image = CardUtils.QUEEN_C_IMAGE;
+//						break;
+//
+//					case CardUtils.SUIT_HEARTS :
+//						image = CardUtils.QUEEN_H_IMAGE;
+//						break;
+//
+//					case CardUtils.SUIT_SPADES :
+//						image = CardUtils.QUEEN_S_IMAGE;
+//						break;
+//				}
+//				break;
+//
+//			case CardUtils.RANK_JACK :
+//				rankSymbol = "J";
+//				switch (model.getSuit())
+//				{
+//					case CardUtils.SUIT_DIAMONDS :
+//						image = CardUtils.JACK_D_IMAGE;
+//						break;
+//
+//					case CardUtils.SUIT_CLUBS :
+//						image = CardUtils.JACK_C_IMAGE;
+//						break;
+//
+//					case CardUtils.SUIT_HEARTS :
+//						image = CardUtils.JACK_H_IMAGE;
+//						break;
+//
+//					case CardUtils.SUIT_SPADES :
+//						image = CardUtils.JACK_S_IMAGE;
+//						break;
+//				}
+//				break;
 
-			case CardUtils.RANK_ACE :
-				rankSymbol = "A";
-				break;
-
-			case CardUtils.RANK_KING :
-				rankSymbol = "K";
-				switch (model.getSuit())
-				{
-					case CardUtils.SUIT_DIAMONDS :
-						image = CardUtils.KING_D_IMAGE;
-						break;
-
-					case CardUtils.SUIT_CLUBS :
-						image = CardUtils.KING_C_IMAGE;
-						break;
-
-					case CardUtils.SUIT_HEARTS :
-						image = CardUtils.KING_H_IMAGE;
-						break;
-
-					case CardUtils.SUIT_SPADES :
-						image = CardUtils.KING_S_IMAGE;
-						break;
-				}
-				break;
-
-			case CardUtils.RANK_QUEEN :
-				rankSymbol = "Q";
-				switch (model.getSuit())
-				{
-					case CardUtils.SUIT_DIAMONDS :
-						image = CardUtils.QUEEN_D_IMAGE;
-						break;
-
-					case CardUtils.SUIT_CLUBS :
-						image = CardUtils.QUEEN_C_IMAGE;
-						break;
-
-					case CardUtils.SUIT_HEARTS :
-						image = CardUtils.QUEEN_H_IMAGE;
-						break;
-
-					case CardUtils.SUIT_SPADES :
-						image = CardUtils.QUEEN_S_IMAGE;
-						break;
-				}
-				break;
-
-			case CardUtils.RANK_JACK :
-				rankSymbol = "J";
-				switch (model.getSuit())
-				{
-					case CardUtils.SUIT_DIAMONDS :
-						image = CardUtils.JACK_D_IMAGE;
-						break;
-
-					case CardUtils.SUIT_CLUBS :
-						image = CardUtils.JACK_C_IMAGE;
-						break;
-
-					case CardUtils.SUIT_HEARTS :
-						image = CardUtils.JACK_H_IMAGE;
-						break;
-
-					case CardUtils.SUIT_SPADES :
-						image = CardUtils.JACK_S_IMAGE;
-						break;
-				}
-				break;
-
-		}
 		/*
 		 * In case of an image, we will have two copies of it, one flipped
 		 * vertically, and the two will be centered in the card inside a
@@ -337,7 +419,7 @@ public class JCard extends JPanel implements Observer, MouseListener
 		Insets insets = getInsets();
 
 		// optimization?
-		int tempRank = model.getRank();
+		Dénomination tempRank = model.getRank();
 		// int tempSuit = model.getSuit();
 
 		AffineTransform saveXform = g2.getTransform();
@@ -346,7 +428,7 @@ public class JCard extends JPanel implements Observer, MouseListener
 		// generate the suit symbols scaled to the size of the card
 		// special case for ACE -- gets a big symbol
 		double scaleFactor = 12.0d;
-		if (tempRank == CardUtils.RANK_ACE)
+		if (tempRank == Dénomination.AS)
 		{
 			scaleFactor = 6.0d;
 		}
@@ -397,8 +479,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 		// important to reset this!
 		g2.setTransform(saveXform);
 
-		// spot A1
-		if (tempRank >= CardUtils.RANK_4 && tempRank <= CardUtils.RANK_10)
+		// spot A1 on cards from 4 to 10
+		if (tempRank.compareTo(Dénomination.QUATRE) >=0 && tempRank.compareTo(Dénomination.DIX) <= 0)
 		{
 			g2.translate(xOffset, height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -406,8 +488,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot A2
-		if (tempRank == CardUtils.RANK_9 || tempRank == CardUtils.RANK_10)
+		// spot A2 on cards nine and ten
+		if (tempRank.equals(Dénomination.NEUF) || tempRank.equals(Dénomination.DIX))
 		{
 			g2.translate(xOffset, 2 * height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -416,8 +498,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot A3
-		if (tempRank >= CardUtils.RANK_6 && tempRank <= CardUtils.RANK_8)
+		// spot A3 on cards six to eight
+		if (tempRank.compareTo(Dénomination.SIX) >= 0 && tempRank.compareTo(Dénomination.HUIT) <= 0)
 		{
 			g2.translate(xOffset, height / 2.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -425,8 +507,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot A4
-		if (tempRank == CardUtils.RANK_9 || tempRank == CardUtils.RANK_10)
+		// spot A4 on cards nine and ten
+		if (tempRank.equals(Dénomination.NEUF) || tempRank.equals(Dénomination.DIX))
 		{
 			g2.translate(xOffset, 3 * height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -434,8 +516,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot A5
-		if (tempRank >= CardUtils.RANK_4 && tempRank <= CardUtils.RANK_10)
+		// spot A5 on cards four to ten
+		if (tempRank.compareTo(Dénomination.QUATRE) >= 0 && tempRank.compareTo(Dénomination.DIX) <= 0)
 		{
 			g2.translate(xOffset, 4 * height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -451,8 +533,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 		// important to reset this!
 		g2.setTransform(saveXform);
 
-		// spot B1
-		if (tempRank == CardUtils.RANK_2 || tempRank == CardUtils.RANK_3)
+		// spot B1 on cards two and three
+		if (tempRank.equals(Dénomination.DEUX) || tempRank.equals(Dénomination.TROIS))
 		{
 			g2.translate(xOffset, height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -460,10 +542,10 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot B2
-		if (tempRank == CardUtils.RANK_7
-			|| tempRank == CardUtils.RANK_8
-			|| tempRank == CardUtils.RANK_10)
+		// spot B2 on cards seven, eight and ten
+		if (tempRank.equals(Dénomination.SEPT)
+			|| tempRank.equals(Dénomination.HUIT)
+			|| tempRank.equals(Dénomination.DIX))
 		{
 			g2.translate(
 				xOffset,
@@ -475,11 +557,11 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot B3
-		if (tempRank == CardUtils.RANK_ACE
-			|| tempRank == CardUtils.RANK_3
-			|| tempRank == CardUtils.RANK_5
-			|| tempRank == CardUtils.RANK_9)
+		// spot B3 on cards ace, three, five and nine
+		if (tempRank.equals(Dénomination.AS)
+			|| tempRank.equals(Dénomination.TROIS)
+			|| tempRank.equals(Dénomination.CINQ)
+			|| tempRank.equals(Dénomination.NEUF))
 		{
 			g2.translate(xOffset, height / 2.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -487,8 +569,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot B4
-		if (tempRank == CardUtils.RANK_8 || tempRank == CardUtils.RANK_10)
+		// spot B4 on cards eight and ten
+		if (tempRank.equals(Dénomination.HUIT) || tempRank.equals(Dénomination.DIX))
 		{
 			g2.translate(
 				xOffset,
@@ -500,8 +582,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot B5
-		if (tempRank == CardUtils.RANK_2 || tempRank == CardUtils.RANK_3)
+		// spot B5 on cards two and three
+		if (tempRank.equals(Dénomination.DEUX) || tempRank.equals(Dénomination.TROIS))
 		{
 			g2.translate(xOffset, 4 * height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -518,8 +600,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 		// important to reset this!
 		g2.setTransform(saveXform);
 
-		// spot C1
-		if (tempRank >= CardUtils.RANK_4 && tempRank <= CardUtils.RANK_10)
+		// spot C1 on cards from four to ten
+		if (tempRank.compareTo(Dénomination.QUATRE) >= 0 && tempRank.compareTo(Dénomination.DIX) <= 0)
 		{
 			g2.translate(xOffset, height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -527,8 +609,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot C2
-		if (tempRank == CardUtils.RANK_9 || tempRank == CardUtils.RANK_10)
+		// spot C2 on cards nine and ten
+		if (tempRank.equals(Dénomination.NEUF) || tempRank.equals(Dénomination.DIX))
 		{
 			g2.translate(xOffset, 2 * height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -537,8 +619,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot C3
-		if (tempRank >= CardUtils.RANK_6 && tempRank <= CardUtils.RANK_8)
+		// spot C3 on cards from six to eight
+		if (tempRank.compareTo(Dénomination.SIX) >= 0 && tempRank.compareTo(Dénomination.HUIT) <= 0)
 		{
 			g2.translate(xOffset, height / 2.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -546,8 +628,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot C4
-		if (tempRank == CardUtils.RANK_9 || tempRank == CardUtils.RANK_10)
+		// spot C4 on cards nine and ten
+		if (tempRank.equals(Dénomination.NEUF) || tempRank.equals(Dénomination.DIX))
 		{
 			g2.translate(xOffset, 3 * height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -555,8 +637,8 @@ public class JCard extends JPanel implements Observer, MouseListener
 			g2.setTransform(saveXform);
 		}
 
-		// spot C5
-		if (tempRank >= CardUtils.RANK_4 && tempRank <= CardUtils.RANK_10)
+		// spot C5 on cards from four to ten
+		if (tempRank.compareTo(Dénomination.QUATRE) >= 0 && tempRank.compareTo(Dénomination.DIX) <= 0)
 		{
 			g2.translate(xOffset, 4 * height / 5.0 - halfSymbolHeight);
 			g2.fill(scaledSuitSymbol);
@@ -627,25 +709,24 @@ public class JCard extends JPanel implements Observer, MouseListener
 		/*
 		 * iterate through the suits, in their defined order
 		 */
-		LinkedHashSet suits = CardUtils.getSuits();
-		for (Iterator suitIter = suits.iterator(); suitIter.hasNext();)
+		// LinkedHashSet suits = CardUtils.getSuits();
+		for (Iterator suitIter = CouleurCarte.COULEURS.iterator(); suitIter.hasNext();)
 		{
-			int suit = ((Integer) suitIter.next()).intValue();
+			CouleurCarte suit = (CouleurCarte) suitIter.next();
 
 			/*
 			 * iterate through the ranks, in their defined order
 			 */
-			LinkedHashSet ranks = CardUtils.getRanks();
-			for (Iterator rankIter = ranks.iterator(); rankIter.hasNext();)
+			for (Iterator rankIter = Dénomination.DÉNOMINATIONS.iterator(); rankIter.hasNext();)
 			{
-				int rank = ((Integer) rankIter.next()).intValue();
+				Dénomination rank = (Dénomination) rankIter.next();
 				//System.out.println("Adding card for " + suit + " and " + rank);
 				pane.add(new JCard(new DefaultCardModel(rank, suit)));
 			}
 		}
 
 		frame.pack();
-		frame.show();
+		frame.setVisible(true); // frame.show
 	}
 
 	/* (non-Javadoc)

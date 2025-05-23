@@ -16,50 +16,48 @@ import java.util.Observable;
  */
 public class DefaultCardModel extends Observable
 {
-	public DefaultCardModel(int rank, int suit)
+	public DefaultCardModel(Dénomination rank, CouleurCarte suit)
 	{
-		validate(rank, suit);
 		this.rank = rank;
 		this.suit = suit;
 		this.visible = true;
 	}
 
-	/**
-	 * @param rank
-	 * @param suit
-	 */
-	private void validate(int rank, int suit)
-	{
-		if (suit != CardUtils.SUIT_DIAMONDS
-				&& suit != CardUtils.SUIT_CLUBS
-				&& suit != CardUtils.SUIT_HEARTS
-				&& suit != CardUtils.SUIT_SPADES)
-				{
-					throw new IllegalArgumentException("Illegal suit value: " + suit);
-				}
+//	/**
+//	 * @param rank
+//	 * @param suit
+//	 */
+//	private void validate(int rank, int suit)
+//	{
+//		if (suit != CardUtils.SUIT_DIAMONDS
+//				&& suit != CardUtils.SUIT_CLUBS
+//				&& suit != CardUtils.SUIT_HEARTS
+//				&& suit != CardUtils.SUIT_SPADES)
+//				{
+//					throw new IllegalArgumentException("Illegal suit value: " + suit);
+//				}
+//
+//		if(
+//			rank != CardUtils.RANK_ACE
+//				&& rank != CardUtils.RANK_2
+//				&& rank != CardUtils.RANK_3
+//				&& rank != CardUtils.RANK_4
+//				&& rank != CardUtils.RANK_5
+//				&& rank != CardUtils.RANK_6
+//				&& rank != CardUtils.RANK_7
+//				&& rank != CardUtils.RANK_8
+//				&& rank != CardUtils.RANK_9
+//				&& rank != CardUtils.RANK_10
+//				&& rank != CardUtils.RANK_JACK
+//				&& rank != CardUtils.RANK_QUEEN
+//				&& rank != CardUtils.RANK_KING)
+//		{
+//			throw new IllegalArgumentException("Illegal rank value: " + rank);
+//		}
+//	}
 
-		if(
-			rank != CardUtils.RANK_ACE
-				&& rank != CardUtils.RANK_2
-				&& rank != CardUtils.RANK_3
-				&& rank != CardUtils.RANK_4
-				&& rank != CardUtils.RANK_5
-				&& rank != CardUtils.RANK_6
-				&& rank != CardUtils.RANK_7
-				&& rank != CardUtils.RANK_8
-				&& rank != CardUtils.RANK_9
-				&& rank != CardUtils.RANK_10
-				&& rank != CardUtils.RANK_JACK
-				&& rank != CardUtils.RANK_QUEEN
-				&& rank != CardUtils.RANK_KING)
-		{
-			throw new IllegalArgumentException("Illegal rank value: " + rank);
-		}
-	}
-
-	public void update(int rank, int suit)
+	public void update(Dénomination rank, CouleurCarte suit)
 	{
-		validate(rank, suit);
 		this.rank = rank;
 		this.suit = suit;
 		this.setChanged();
@@ -81,7 +79,7 @@ public class DefaultCardModel extends Observable
 	/**
 	 * @return
 	 */
-	public int getRank()
+	public Dénomination getRank()
 	{
 		return rank;
 	}
@@ -89,7 +87,7 @@ public class DefaultCardModel extends Observable
 	/**
 	 * @return
 	 */
-	public int getSuit()
+	public CouleurCarte getSuit()
 	{
 		return suit;
 	}
@@ -97,7 +95,7 @@ public class DefaultCardModel extends Observable
 	/**
 	 * @param i
 	 */
-	public void setRank(int i)
+	public void setRank(Dénomination i)
 	{
 		rank = i;
 		this.setChanged();
@@ -107,15 +105,15 @@ public class DefaultCardModel extends Observable
 	/**
 	 * @param i
 	 */
-	public void setSuit(int i)
+	public void setSuit(CouleurCarte i)
 	{
 		suit = i;
 		this.setChanged();
 		this.notifyObservers();
 	}
 
-	private int rank;
-	private int suit;
+	private Dénomination rank;
+	private CouleurCarte suit;
 	private boolean visible;
 
 }

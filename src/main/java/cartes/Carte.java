@@ -1,141 +1,146 @@
 /*
- * Created on Dec 10, 2004
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * 2005-06-12
+ * Code source inspiré et traduit à partir d'un énoncé de laboratoire du MIT
+ * 6.170  	Laboratory in Software Engineering, Fall 2002
+ * http://6170.lcs.mit.edu/www-archive/Old-2002-Fall/psets/ps2/ps2.html
  */
+ 
 package cartes;
 
 /**
- * @author Cris
- *
- *
+ * Carte est une classe représentant une carte dans le jeu de Poker,
+ * ayant une couleur et une dénomination. C'est une classe immuable.
+ * 
+ * @author Cris Fuhrman
  */
-public class Carte implements Comparable
+public class Carte implements Comparable<Carte>
 {
-	public static String[] sortes = { "Trèfle", "Carreau", "Pique", "Coeur" };
-	public static String[] rangs =
-		{
-			"Deux",
-			"Trois",
-			"Quatre",
-			"Cinq",
-			"Six",
-			"Sept",
-			"Huit",
-			"Neuf",
-			"Dix",
-			"Valet",
-			"Dame",
-			"Roi",
-			"As",
-			};
-
-	public static int rangNumérique(String rangString)
-	{
-
-		for (int rangIndice = 0; rangIndice < rangs.length; rangIndice++)
-		{
-			if (rangs[rangIndice].equalsIgnoreCase(rangString))
-			{
-				return rangIndice + 1;
-			}
-		}
-
-		throw new IllegalArgumentException("Le rang '" + rangString + "' pour une carte n'est pas légal");
-		
-	}
-
-	public static int sorteNumérique(String sorteString)
-	{
-		for (int sorteIndice = 0; sorteIndice < rangs.length; sorteIndice++)
-		{
-			if (sortes[sorteIndice].equalsIgnoreCase(sorteString))
-			{
-				return sorteIndice + 1;
-			}
-		}
-
-		throw new IllegalArgumentException("La sorte '" + sorteString + "' pour une carte n'est pas légale");
-	}
-
 	/**
-	 * @param rang valeur de 0 &agrave; 12
-	 * @param sorte valeur de 0 &agrave; 3
+	 * @param dénomination
+	 * @param couleur 
 	 */
-	public Carte(int rang, int sorte)
+	public Carte(Dénomination dénomination, CouleurCarte couleur)
 	{
-		if (rang < 1 || rang > rangs.length)
-		{
-			throw new IllegalArgumentException("Le rang pour une carte doit être entre 1 et " + rangs.length);
-		}
-		else 
-		if (sorte < 1 || sorte > sortes.length)
-		{
-			throw new IllegalArgumentException("La sorte pour une carte doit être entre 1 et " + sortes.length);
-		}
-
-		this.rang = rang;
-		this.sorte = sorte;
+		this.dénomination = dénomination;
+		this.couleur = couleur;
 	}
 
+	//-------------------------------------------
 	/**
-	 * Constructeur pour une carte avec des noms de rang et de sorte.
-	 * 
-	 * @param rangString le rang de la carte. Les noms de rang légaux sont "deux", "trois", ..., "dix", "valet", "dame", "roi", "as"
-	 * @param sorteString la sorte de la carte. Les noms de sorte légaux sont "trèfle", "carreau", "pique", "coeur"
+	 * Retourne true si cette carte est égale à l'autre carte.
+	 * Deux cartes sont égales chacune a les mêmes couleur et dénomination. 
+	 *
+	 * @param autreCarte  the other card
+	 * @return true si les cartes sont égales; sinon false
 	 */
-	public Carte(String rangString, String sorteString)
+	@Override
+	public boolean equals(Object autreCarte)
 	{
-		this.rang = rangNumérique(rangString);
-		this.sorte = sorteNumérique(sorteString);		
+		if (autreCarte instanceof Carte)
+		{
+			return (this.hashCode() == autreCarte.hashCode());
+		}
+		else return false;
 	}
 
+	//-------------------------------------------
 	/**
-	 * @return
+	 * Retourne un code de hachage unique (unique hash code) pour l'objet.
+	 * Ce code de hachage est pareil pour toutes les cartes égales à cette carte
+	 * (selon la méthode equals). C'est une bonne pratique de redéfinir cette
+	 * méthode lorsque l'on redéfinit la méthode equals.
+	 *
+	 * @return le code de hachage de cet objet
 	 */
-	public int getValeur()
+	@Override
+	public int hashCode()
 	{
-		return this.rang * sortes.length + sorte;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object o)
-	{
-		// trier de la carte la plus haute vers le bas
 		return
-			- new Integer(this.getValeur()).compareTo(
-				new Integer(((Carte) o).getValeur()));
+			(couleurNuméro(this.couleur) * Dénomination.DÉNOMINATIONS.size())
+				+ dénomNuméro(this.dénomination);
 	}
 
 	/**
-	 * @return
+	 * Retourne l'indice de la couleur de la carte, utilisé pour calculer les valeurs
+	 * numériques (internes) de la carte.
+	 * 
+	 * @param couleur
+	 * @return valeur entre 0 et 3
 	 */
-	public int getRang()
+	private int couleurNuméro(CouleurCarte couleur)
 	{
-		return rang;
+		return CouleurCarte.COULEURS.indexOf(couleur);
 	}
 	
 	/**
-	 * @return
+	 * Retourne l'indice de la dénomination de la carte, utilisé pour calculer les valeurs
+	 * numériques (internes) de la carte.
+	 * 
+	 * @param dénomination pour laquelle on cherche son numéro
+	 * @return valeur entre 1 et 13
 	 */
-	public int getSorte()
+	private int dénomNuméro(Dénomination dénom)
 	{
-		return sorte;
+		// note : le "2" est le premier numéro
+		return Dénomination.DÉNOMINATIONS.indexOf(dénom) + 1;
+	}
+
+	/*
+	 * 
+     * @param o  l'objet qui sera comparé
+     * @return   un entier négatif, zéro ou un entier positif, selon si
+     *           cette carte est inférieure, égal ou supérieure à
+     * 			 l'objet spécifié.
+     * @exception ClassCastException si l'objet spécifié n'a pas le type Carte
+     * @exception NullPointerException si l'objet spécifié est null
+	 */
+	public int compareTo(Carte c)
+	{
+		if (c == null)
+		{
+			throw new NullPointerException();
+		}
+		Carte autreCarte = c;
+		int cetteCarteVal =
+			dénomNuméro(this.dénomination) * CouleurCarte.COULEURS.size()
+				+ couleurNuméro(this.couleur);
+		int autreCarteVal =
+			dénomNuméro(autreCarte.dénomination) * CouleurCarte.COULEURS.size()
+				+ couleurNuméro(autreCarte.couleur);
+
+		//System.out.println("compareTo: this.carte: " + this + ", cetteCarteVal = " + cetteCarteVal + ", autreCarte: " + autreCarte + ", autreCarteVal = " + autreCarteVal);
+
+		return cetteCarteVal - autreCarteVal;
+	}
+
+	/**
+	 * Retourne la dénomination pour la carte
+	 * @return la dénomination
+	 */
+	public Dénomination getDénomination()
+	{
+		return dénomination;
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * Retourne la couleur (carreau, pique, etc.) de la carte
+	 * @return la couleur
+	 */
+	public CouleurCarte getCouleur()
+	{
+		return couleur;
+	}
+	
+	/* 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString()
 	{
-		return rangs[this.rang - 1] + " de " + sortes[this.sorte - 1];
+		return this.dénomination.toString() + " de " + this.couleur.toString();
 	}
 	
-	private int sorte;    // p.ex. coeur, pique, etc.
-	private int rang;     // p.ex. 2, 3, 4, ..., Dame, Roi, As
-
+	private CouleurCarte couleur;    // p.ex. coeur, pique, etc.
+	private Dénomination dénomination;     // p.ex. 2, 3, 4, ..., Dame, Roi, As
 	
 }

@@ -7,16 +7,15 @@
 package cartes;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+
 /**
  * @author Cris
  *
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class Jeu extends ArrayList
+public class Jeu extends ArrayList<Carte>
 {
 
 	public Jeu()
@@ -24,18 +23,11 @@ public class Jeu extends ArrayList
 		/*
 		 * iterate through the suits, in their defined order
 		 */
-		Collection suits = CardUtils.getSuits();
-		for (Iterator suitIter = suits.iterator(); suitIter.hasNext();)
-		{
-			int suit = ((Integer) suitIter.next()).intValue();
-
+		for (CouleurCarte suit : CouleurCarte.COULEURS) {
 			/*
 			 * iterate through the ranks, in their defined order
 			 */
-			Collection ranks = CardUtils.getRanks();
-			for (Iterator rankIter = ranks.iterator(); rankIter.hasNext();)
-			{
-				int rank = ((Integer) rankIter.next()).intValue();
+			for (Dénomination rank : Dénomination.DÉNOMINATIONS) {			
 				this.add(new Carte(rank, suit));
 			}
 		}

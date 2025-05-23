@@ -4,6 +4,8 @@
  */
 package mains;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.SortedSet;
 
 import cartes.Carte;
@@ -12,19 +14,21 @@ import cartes.Carte;
  * @author Cris
  *
  */
-public class Carré extends AbstractConnaîsseurRang
+public class Carré extends AbstractAnalyseurRang
 {
 
-	public boolean reconnaîtreMain(DemandeRecMain demande)
+	public boolean reconnaîtreMain(ReqAnalyseMain demande)
 	{
 		boolean résultat = false;
 		Main main = demande.getMain();
-		SortedSet carré = RangPoker.trouverDénominationN(main.iterator(), 4);
-		if (carré.size() > 0)
+		SortedSet<Carte> carrés = RangPoker.trouverDénominationN(main.iterator(), 4);
+		if (carrés.size() > 0)
 		{
-			Carte paire = (Carte) carré.first();
+			// créer une le nouveau rang, avec une carte du carré comme déterminante
+			Collection<Carte> carré = new ArrayList<Carte>();
+			carré.add(carrés.first());
 			demande.setRangReconnu(
-				new RangPoker(RangPoker.RANG_CARRÉ, paire.getRang()));
+				new RangPoker(RangPoker.RANG_CARRÉ, carré));
 			résultat = true;
 		}
 		return résultat;
