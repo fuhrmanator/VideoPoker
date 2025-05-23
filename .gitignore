@@ -8,3 +8,4 @@ convert-to-utf8.sh
 manifest.mf
 *.xls
 *.jardesc
+target/
