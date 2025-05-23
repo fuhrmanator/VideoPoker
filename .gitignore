@@ -1,0 +1,10 @@
+*.class
+*.lst
+*.repository
+*.ucd
+.project
+.umlproject
+convert-to-utf8.sh
+manifest.mf
+*.xls
+*.jardesc
